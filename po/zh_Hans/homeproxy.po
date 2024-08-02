@@ -94,7 +94,7 @@ msgstr "新增服务器"
 
 #: htdocs/luci-static/resources/view/homeproxy/node.js:1463
 msgid "Add name for Subscription URL, correspond in sequence."
-msgstr ""
+msgstr "为订阅URL添加名称，按顺序对应."
 
 #: htdocs/luci-static/resources/view/homeproxy/client.js:763
 #: htdocs/luci-static/resources/view/homeproxy/node.js:551
@@ -221,11 +221,11 @@ msgstr "自动配置防火墙"
 
 #: htdocs/luci-static/resources/view/homeproxy/client.js:1127
 msgid "Auto set backend"
-msgstr ""
+msgstr "自动设置后端"
 
 #: htdocs/luci-static/resources/view/homeproxy/client.js:1128
 msgid "Auto set backend address for dashboard."
-msgstr ""
+msgstr "自动设置后端地址"
 
 #: htdocs/luci-static/resources/view/homeproxy/node.js:1427
 msgid "Auto update"
@@ -237,7 +237,7 @@ msgstr "自动更新订阅。"
 
 #: htdocs/luci-static/resources/view/homeproxy/client.js:1136
 msgid "Automatically generated if empty"
-msgstr ""
+msgstr "留空自动生成"
 
 #: htdocs/luci-static/resources/view/homeproxy/node.js:769
 msgid "BBR"
@@ -364,17 +364,17 @@ msgstr "思科公共 DNS（208.67.222.222）"
 
 #: htdocs/luci-static/resources/view/homeproxy/client.js:1067
 msgid "Clash API settings"
-msgstr ""
+msgstr "Clash API 设置"
 
 #: htdocs/luci-static/resources/view/homeproxy/client.js:1097
 #: htdocs/luci-static/resources/view/homeproxy/status.js:205
 msgid "Clash dashboard version"
-msgstr ""
+msgstr "Clash 面板版本"
 
 #: htdocs/luci-static/resources/view/homeproxy/client.js:625
 #: htdocs/luci-static/resources/view/homeproxy/client.js:971
 msgid "Clash mode"
-msgstr ""
+msgstr "Clash 模式"
 
 #: htdocs/luci-static/resources/view/homeproxy/status.js:165
 msgid "Clean log"
@@ -417,7 +417,7 @@ msgstr "连接检查"
 
 #: htdocs/luci-static/resources/view/homeproxy/node.js:1432
 msgid "Cron expression"
-msgstr ""
+msgstr "Cron 表达式"
 
 #: htdocs/luci-static/resources/view/homeproxy/client.js:287
 msgid "Custom routing"
@@ -693,7 +693,7 @@ msgstr "修改节点"
 
 #: htdocs/luci-static/resources/view/homeproxy/ruleset.js:26
 msgid "Edit ruleset"
-msgstr ""
+msgstr "编辑规则集"
 
 #: htdocs/luci-static/resources/view/homeproxy/server.js:543
 msgid "Email"
@@ -730,7 +730,7 @@ msgstr "启用 ACME"
 
 #: htdocs/luci-static/resources/view/homeproxy/client.js:1072
 msgid "Enable Clash API"
-msgstr ""
+msgstr "开启 Clash API"
 
 #: htdocs/luci-static/resources/view/homeproxy/node.js:1250
 msgid "Enable ECH"
@@ -915,7 +915,7 @@ msgstr "授予 homeproxy 访问 UCI 配置的权限"
 #: htdocs/luci-static/resources/view/homeproxy/node.js:1390
 #: htdocs/luci-static/resources/view/homeproxy/node.js:1413
 msgid "Group"
-msgstr ""
+msgstr "组"
 
 #: htdocs/luci-static/resources/view/homeproxy/client.js:544
 #: htdocs/luci-static/resources/view/homeproxy/client.js:896
@@ -1064,7 +1064,7 @@ msgstr ""
 
 #: htdocs/luci-static/resources/view/homeproxy/client.js:1096
 msgid "If the selected dashboard is <code>"
-msgstr ""
+msgstr "选择的面板是"
 
 #: htdocs/luci-static/resources/view/homeproxy/node.js:955
 #: htdocs/luci-static/resources/view/homeproxy/server.js:353
@@ -1109,7 +1109,7 @@ msgstr "接口控制"
 
 #: htdocs/luci-static/resources/view/homeproxy/node.js:915
 msgid "Interrupt existing connections"
-msgstr ""
+msgstr "打断现有连接"
 
 #: htdocs/luci-static/resources/view/homeproxy/node.js:916
 msgid "Interrupt existing connections when the selected outbound has changed."
@@ -1227,7 +1227,7 @@ msgstr "日志为空。"
 
 #: htdocs/luci-static/resources/view/homeproxy/client.js:1085
 msgid "Log level"
-msgstr ""
+msgstr "日志等级"
 
 #: htdocs/luci-static/resources/view/homeproxy/node.js:1088
 msgid "MTU"
@@ -1483,7 +1483,7 @@ msgstr "New Reno"
 
 #: htdocs/luci-static/resources/view/homeproxy/client.js:1075
 msgid "Nginx Support"
-msgstr ""
+msgstr "Nginx 支持"
 
 #: htdocs/luci-static/resources/view/homeproxy/node.js:925
 #: htdocs/luci-static/resources/view/homeproxy/node.js:942
@@ -1535,7 +1535,7 @@ msgstr "无"
 #: htdocs/luci-static/resources/view/homeproxy/client.js:1096
 #: htdocs/luci-static/resources/view/homeproxy/client.js:1110
 msgid "Not Installed"
-msgstr ""
+msgstr "未安装"
 
 #: htdocs/luci-static/resources/view/homeproxy/node.js:641
 #: htdocs/luci-static/resources/view/homeproxy/server.js:221
@@ -1557,7 +1557,7 @@ msgstr "仅代理中国大陆"
 
 #: htdocs/luci-static/resources/view/homeproxy/client.js:88
 msgid "Open Clash Dashboard"
-msgstr ""
+msgstr "打开 Clash 面板"
 
 #: htdocs/luci-static/resources/view/homeproxy/client.js:506
 #: htdocs/luci-static/resources/view/homeproxy/client.js:850
@@ -1940,7 +1940,7 @@ msgstr "规则集 URL"
 
 #: root/usr/share/luci/menu.d/luci-app-homeproxy.json:30
 msgid "Ruleset Settings"
-msgstr ""
+msgstr "规则集设置"
 
 #: htdocs/luci-static/resources/view/homeproxy/client.js:509
 #: htdocs/luci-static/resources/view/homeproxy/client.js:853
@@ -1984,11 +1984,11 @@ msgstr "保存订阅设置"
 
 #: htdocs/luci-static/resources/view/homeproxy/client.js:1136
 msgid "Secret"
-msgstr ""
+msgstr "密码"
 
 #: htdocs/luci-static/resources/view/homeproxy/client.js:1095
 msgid "Select Clash Dashboard"
-msgstr ""
+msgstr "选择 Clash 面板"
 
 #: htdocs/luci-static/resources/view/homeproxy/node.js:547
 msgid "Selector"
@@ -2256,7 +2256,7 @@ msgstr "腾讯公共 DNS（119.29.29.29）"
 
 #: htdocs/luci-static/resources/view/homeproxy/node.js:889
 msgid "Test URL"
-msgstr ""
+msgstr "测试连接"
 
 #: htdocs/luci-static/resources/view/homeproxy/server.js:559
 msgid "The ACME CA provider to use."
@@ -2307,7 +2307,7 @@ msgstr ""
 
 #: htdocs/luci-static/resources/view/homeproxy/client.js:1139
 msgid "The current Secret is <code>"
-msgstr ""
+msgstr "当前密码是"
 
 #: htdocs/luci-static/resources/view/homeproxy/node.js:862
 msgid "The default outbound tag. The first outbound will be used if empty."
