@@ -6,11 +6,11 @@
 
 'use strict';
 'require form';
-'require fs';
 'require network';
 'require poll';
 'require rpc';
 'require uci';
+'require ui';
 'require validation';
 'require view';
 
@@ -23,6 +23,12 @@ var callServiceList = rpc.declare({
 	method: 'list',
 	params: ['name'],
 	expect: { '': {} }
+});
+
+var callRcInit = rpc.declare({
+	object: 'rc',
+	method: 'init',
+	params: ['name', 'action']
 });
 
 var callReadDomainList = rpc.declare({
@@ -71,11 +77,14 @@ function renderStatus(isRunning, args) {
 	if (isRunning) {
 		if (args.set_dash_backend) {
 			switch (args.dashboard_repo) {
+				case 'metacubex/metacubexd':
+					urlParams = String.format('#/setup?hostname=%s&port=%s&secret=%s', window.location.hostname, args.api_port, args.api_secret);
+					break;
 				case 'metacubex/yacd-meta':
 					urlParams = String.format('?hostname=%s&port=%s&secret=%s', window.location.hostname, args.api_port, args.api_secret);
 					break;
-				case 'metacubex/metacubexd':
-					urlParams = String.format('#/setup?hostname=%s&port=%s&secret=%s', window.location.hostname, args.api_port, args.api_secret);
+				case 'metacubex/razord-meta':
+					urlParams = String.format('?host=%s&port=%s&secret=%s', window.location.hostname, args.api_port, args.api_secret);
 					break;
 				default:
 					break;
@@ -92,6 +101,17 @@ function renderStatus(isRunning, args) {
 		renderHTML = spanTemp.format('red', _('HomeProxy'), _('NOT RUNNING'));
 
 	return renderHTML;
+}
+
+function handleAction(action, ev) {
+	return callRcInit("homeproxy", action).then((ret) => {
+		if (ret)
+			throw _('Command failed');
+
+		return true;
+	}).catch((e) => {
+		ui.addNotification(null, E('p', _('Failed to execute "/etc/init.d/%s %s" action: %s').format("homeproxy", action, e)));
+	});
 }
 
 function validatePortRange(section_id, value) {
@@ -165,35 +185,10 @@ return view.extend({
 		}
 
 		/* Cache all subscription info, they will be called multiple times */
-		var subs_info = {};
-		{
-			let s = uci.get(data[0], 'subscription');
-			let urls = s.subscription_url;
-			let names = s.subscription_name || [];
-			if (urls) {
-				for (var i = 0; i < urls.length; i++) {
-					subs_info[hp.calcStringMD5(urls[i])] = {
-						"url": urls[i],
-						"name": names[i],
-						"order": i + 1
-					};
-				}
-			}
-		};
+		var subs_info = hp.loadSubscriptionInfo(data[0]);
 
 		/* Cache all configured proxy nodes, they will be called multiple times */
-		var proxy_nodes = {};
-		uci.sections(data[0], 'node', (res) => {
-			var nodeaddr = ((res.type === 'direct') ? res.override_address : res.address) || '',
-			    nodeport = ((res.type === 'direct') ? res.override_port : res.port) || '';
-
-			proxy_nodes[res['.name']] =
-				String.format('%s [%s] %s', res.grouphash ?
-					String.format('[%s]', subs_info[res.grouphash]?.name || (subs_info[res.grouphash]?.order ?
-					_('Group ') + subs_info[res.grouphash].order : res.grouphash)) : '',
-					res.type, res.label || ((stubValidator.apply('ip6addr', nodeaddr) ?
-					String.format('[%s]', nodeaddr) : nodeaddr) + ':' + nodeport));
-		});
+		var proxy_nodes = hp.loadNodesList(data[0], subs_info);
 
 		s = m.section(form.NamedSection, 'config', 'homeproxy');
 
@@ -201,8 +196,8 @@ return view.extend({
 
 		o = s.taboption('routing', form.ListValue, 'main_node', _('Main node'));
 		o.value('nil', _('Disable'));
-		for (var i in proxy_nodes)
-			o.value(i, proxy_nodes[i]);
+		for (var k in proxy_nodes)
+			o.value(k, proxy_nodes[k]);
 		o.default = 'nil';
 		o.depends({'routing_mode': 'custom', '!reverse': true});
 		o.rmempty = false;
@@ -210,8 +205,8 @@ return view.extend({
 		o = s.taboption('routing', form.ListValue, 'main_udp_node', _('Main UDP node'));
 		o.value('nil', _('Disable'));
 		o.value('same', _('Same as main node'));
-		for (var i in proxy_nodes)
-			o.value(i, proxy_nodes[i]);
+		for (var k in proxy_nodes)
+			o.value(k, proxy_nodes[k]);
 		o.default = 'nil';
 		o.depends({'routing_mode': /^((?!custom).)+$/, 'proxy_mode': /^((?!redirect$).)+$/});
 		o.rmempty = false;
@@ -406,7 +401,8 @@ return view.extend({
 		so.inputtitle = _('Reload');
 		so.inputstyle = 'apply';
 		so.onclick = function() {
-			return fs.exec('/etc/init.d/homeproxy', ['reload']);
+			return handleAction('reload')
+				.then((res) => { return window.location = window.location.href.split('#')[0] });
 		};
 		/* Routing settings end */
 
@@ -422,7 +418,7 @@ return view.extend({
 		ss.nodescriptions = true;
 		ss.modaltitle = L.bind(hp.loadModalTitle, this, _('Routing node'), _('Add a routing node'), data[0]);
 		ss.sectiontitle = L.bind(hp.loadDefaultLabel, this, data[0]);
-		ss.renderSectionAdd = L.bind(hp.renderSectionAdd, this, ss, {});
+		ss.renderSectionAdd = L.bind(hp.renderSectionAdd, this, ss, {}, true);
 		ss.handleAdd = L.bind(hp.handleAdd, this, ss, {});
 
 		so = ss.option(form.Value, 'label', _('Label'));
@@ -437,8 +433,8 @@ return view.extend({
 
 		so = ss.option(form.ListValue, 'node', _('Node'),
 			_('Outbound node'));
-		for (var i in proxy_nodes)
-			so.value(i, proxy_nodes[i]);
+		for (var k in proxy_nodes)
+			so.value(k, proxy_nodes[k]);
 		so.validate = L.bind(hp.validateUniqueValue, this, data[0], 'routing_node', 'node');
 		so.editable = true;
 
@@ -500,7 +496,7 @@ return view.extend({
 		ss.nodescriptions = true;
 		ss.modaltitle = L.bind(hp.loadModalTitle, this, _('Routing rule'), _('Add a routing rule'), data[0]);
 		ss.sectiontitle = L.bind(hp.loadDefaultLabel, this, data[0]);
-		ss.renderSectionAdd = L.bind(hp.renderSectionAdd, this, ss, prefmt);
+		ss.renderSectionAdd = L.bind(hp.renderSectionAdd, this, ss, prefmt, false);
 		ss.handleAdd = L.bind(hp.handleAdd, this, ss, prefmt);
 
 		ss.tab('field_other', _('Other fields'));
@@ -576,7 +572,6 @@ return view.extend({
 		so = ss.taboption('field_source_ip', form.Flag, 'source_ip_is_private', _('Private source IP'),
 			_('Match private source IP.'));
 		so.default = so.disabled;
-		so.rmempty = false;
 		so.modalonly = true;
 
 		so = ss.taboption('field_host', form.DynamicList, 'ip_cidr', _('IP CIDR'),
@@ -587,7 +582,6 @@ return view.extend({
 		so = ss.taboption('field_host', form.Flag, 'ip_is_private', _('Private IP'),
 			_('Match private IP.'));
 		so.default = so.disabled;
-		so.rmempty = false;
 		so.modalonly = true;
 
 		so = ss.taboption('field_source_port', form.DynamicList, 'source_port', _('Source port'),
@@ -625,9 +619,9 @@ return view.extend({
 		so = ss.taboption('field_other', form.ListValue, 'clash_mode', _('Clash mode'),
 			_('Match clash mode.'));
 		so.value('', _('None'));
-		so.value('Global');
-		so.value('Rule');
-		so.value('Direct');
+		so.value('global', _('Global'));
+		so.value('rule', _('Rule'));
+		so.value('direct', _('Direct'));
 		so.modalonly = true;
 
 		so = ss.taboption('field_other', form.MultiValue, 'rule_set', _('Rule set'),
@@ -649,7 +643,6 @@ return view.extend({
 		so = ss.taboption('field_other', form.Flag, 'rule_set_ipcidr_match_source', _('Match source IP via rule set'),
 			_('Make IP CIDR in rule set used to match the source IP.'));
 		so.default = so.disabled;
-		so.rmempty = false;
 		so.modalonly = true;
 
 		so = ss.taboption('field_other', form.Flag, 'invert', _('Invert'),
@@ -747,7 +740,7 @@ return view.extend({
 		ss.nodescriptions = true;
 		ss.modaltitle = L.bind(hp.loadModalTitle, this, _('DNS server'), _('Add a DNS server'), data[0]);
 		ss.sectiontitle = L.bind(hp.loadDefaultLabel, this, data[0]);
-		ss.renderSectionAdd = L.bind(hp.renderSectionAdd, this, ss, prefmt);
+		ss.renderSectionAdd = L.bind(hp.renderSectionAdd, this, ss, prefmt, true);
 		ss.handleAdd = L.bind(hp.handleAdd, this, ss, prefmt);
 
 		so = ss.option(form.Value, 'label', _('Label'));
@@ -844,7 +837,7 @@ return view.extend({
 		ss.nodescriptions = true;
 		ss.modaltitle = L.bind(hp.loadModalTitle, this, _('DNS rule'), _('Add a DNS rule'), data[0]);
 		ss.sectiontitle = L.bind(hp.loadDefaultLabel, this, data[0]);
-		ss.renderSectionAdd = L.bind(hp.renderSectionAdd, this, ss, prefmt);
+		ss.renderSectionAdd = L.bind(hp.renderSectionAdd, this, ss, prefmt, false);
 		ss.handleAdd = L.bind(hp.handleAdd, this, ss, prefmt);
 
 		ss.tab('field_other', _('Other fields'));
@@ -971,9 +964,9 @@ return view.extend({
 		so = ss.taboption('field_other', form.ListValue, 'clash_mode', _('Clash mode'),
 			_('Match clash mode.'));
 		so.value('', _('None'));
-		so.value('Global');
-		so.value('Rule');
-		so.value('Direct');
+		so.value('global', _('Global'));
+		so.value('rule', _('Rule'));
+		so.value('direct', _('Direct'));
 		so.modalonly = true;
 
 		so = ss.taboption('field_other', form.MultiValue, 'rule_set', _('Rule set'),
@@ -1003,7 +996,7 @@ return view.extend({
 		so.modalonly = true;
 
 		so = ss.taboption('field_other', form.MultiValue, 'outbound', _('Outbound'),
-			_('Match outbound.'));
+			_('Match <code>.outbounds[].server</code> domains.'));
 		so.load = function(section_id) {
 			delete this.keylist;
 			delete this.vallist;
@@ -1100,8 +1093,9 @@ return view.extend({
 			delete this.vallist;
 
 			let repos = [
+				['metacubex/metacubexd', _('metacubexd')],
 				['metacubex/yacd-meta', _('yacd-meta')],
-				['metacubex/metacubexd', _('metacubexd')]
+				['metacubex/razord-meta', _('razord-meta')]
 			];
 
 			this.value('', _('Use Online Dashboard'));

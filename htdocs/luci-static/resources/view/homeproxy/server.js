@@ -6,7 +6,6 @@
 
 'use strict';
 'require form';
-'require fs';
 'require poll';
 'require rpc';
 'require uci';
@@ -73,13 +72,6 @@ return view.extend({
 
 		s = m.section(form.NamedSection, 'server', 'homeproxy', _('Global settings'));
 
-		o = s.option(form.Button, '_reload_server', _('Quick Reload'));
-		o.inputtitle = _('Reload');
-		o.inputstyle = 'apply';
-		o.onclick = function() {
-			return fs.exec('/etc/init.d/homeproxy', ['reload']);
-		};
-
 		o = s.option(form.Flag, 'enabled', _('Enable'));
 		o.default = o.disabled;
 		o.rmempty = false;
@@ -96,7 +88,7 @@ return view.extend({
 		s.nodescriptions = true;
 		s.modaltitle = L.bind(hp.loadModalTitle, this, _('Server'), _('Add a server'), data[0]);
 		s.sectiontitle = L.bind(hp.loadDefaultLabel, this, data[0]);
-		s.renderSectionAdd = L.bind(hp.renderSectionAdd, this, s, prefmt);
+		s.renderSectionAdd = L.bind(hp.renderSectionAdd, this, s, prefmt, false);
 		s.handleAdd = L.bind(hp.handleAdd, this, s, prefmt);
 
 		o = s.option(form.Value, 'label', _('Label'));
