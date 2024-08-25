@@ -760,7 +760,8 @@ function renderNodeSettings(section, data, features, main_node, routing_mode, su
 
 	o = s.option(form.DynamicList, 'filter_keywords', _('Filter keywords'),
 		_('Drop/keep nodes that contain the specific keywords. <a target="_blank" href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions">Regex</a> is supported.'));
-	o.depends({'filter_nodes': '', '!reverse': true});
+	o.depends('filter_nodes', 'blacklist');
+	o.depends('filter_nodes', 'whitelist');
 	o.modalonly = true;
 	/* Selector config end */
 
