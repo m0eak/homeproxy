@@ -806,8 +806,8 @@ if (routing_mode === 'custom') {
 	/* Clash API */
 	if (dashboard_repo) {
 		system('rm -rf ' + RUN_DIR + '/ui');
-		const dashpkg = HP_DIR + '/resources/' + replace(dashboard_repo, '/', '_') + '.zip';
-		system('unzip -qo ' + dashpkg + ' -d ' + RUN_DIR + '/');
+		const dashpkg = HP_DIR + '/resources/' + replace(dashboard_repo, '/', '_') + '.tgz';
+		system('tar -xzf ' + dashpkg + ' -C ' + RUN_DIR + '/');
 		system('mv ' + RUN_DIR + '/*-gh-pages/ ' + RUN_DIR + '/ui/');
 	}
 	config.experimental.clash_api = {
