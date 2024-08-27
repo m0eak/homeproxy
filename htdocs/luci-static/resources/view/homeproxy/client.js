@@ -394,10 +394,10 @@ return view.extend({
 		so.inputtitle = _('Reload');
 		so.inputstyle = 'apply';
 		so.onclick = function() {
-			return fs.exec('/etc/init.d/homeproxy', ['reload', 'client'])
+			return fs.exec('/etc/init.d/homeproxy', ['reload', 'sing-box-c'])
 				.then((res) => { return window.location = window.location.href.split('#')[0] })
 				.catch((e) => {
-					ui.addNotification(null, E('p', _('Failed to execute "/etc/init.d/homeproxy %s %s" reason: %s').format('reload', 'client', e)));
+					ui.addNotification(null, E('p', _('Failed to execute "/etc/init.d/homeproxy %s %s" reason: %s').format('reload', 'sing-box-c', e)));
 				});
 		};
 		/* Routing settings end */

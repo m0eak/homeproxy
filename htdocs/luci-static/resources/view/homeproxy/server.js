@@ -122,10 +122,10 @@ return view.extend({
 		o.inputtitle = _('Reload');
 		o.inputstyle = 'apply';
 		o.onclick = function() {
-			return fs.exec('/etc/init.d/homeproxy', ['reload', 'server'])
+			return fs.exec('/etc/init.d/homeproxy', ['reload', 'sing-box-s'])
 				.then((res) => { return window.location = window.location.href.split('#')[0] })
 				.catch((e) => {
-					ui.addNotification(null, E('p', _('Failed to execute "/etc/init.d/homeproxy %s %s" reason: %s').format('reload', 'server', e)));
+					ui.addNotification(null, E('p', _('Failed to execute "/etc/init.d/homeproxy %s %s" reason: %s').format('reload', 'sing-box-s', e)));
 				});
 		};
 
