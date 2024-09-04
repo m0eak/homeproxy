@@ -1,5 +1,5 @@
 /*
- * SPDX-License-Identifier: GPL-3.0-only
+ * SPDX-License-Identifier: GPL-2.0-only
  *
  * Copyright (C) 2022 ImmortalWrt.org
  */
@@ -473,6 +473,18 @@ function renderNodeSettings(section, data, features, main_node, routing_mode, su
 	o.depends('type', 'direct');
 	o.modalonly = true;
 
+	o = s.option(form.Flag, 'proxy_protocol', _('Proxy protocol'),
+		_('Write proxy protocol in the connection header.'));
+	o.depends('type', 'direct');
+	o.modalonly = true;
+
+	o = s.option(form.ListValue, 'proxy_protocol_version', _('Proxy protocol version'));
+	o.value('1', _('v1'));
+	o.value('2', _('v2'));
+	o.default = '2';
+	o.depends('proxy_protocol', '1');
+	o.modalonly = true;
+
 	/* Hysteria (2) config start */
 	o = s.option(form.ListValue, 'hysteria_protocol', _('Protocol'));
 	o.value('udp');
@@ -748,7 +760,8 @@ function renderNodeSettings(section, data, features, main_node, routing_mode, su
 
 	o = s.option(form.DynamicList, 'filter_keywords', _('Filter keywords'),
 		_('Drop/keep nodes that contain the specific keywords. <a target="_blank" href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions">Regex</a> is supported.'));
-	o.depends({'filter_nodes': '', '!reverse': true});
+	o.depends('filter_nodes', 'blacklist');
+	o.depends('filter_nodes', 'whitelist');
 	o.modalonly = true;
 	/* Selector config end */
 

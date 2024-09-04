@@ -11,7 +11,6 @@ LUCI_DEPENDS:= \
 	+chinadns-ng \
 	+firewall4 \
 	+kmod-nft-tproxy \
-	+unzip
 
 PKG_NAME:=luci-app-homeproxy
 
@@ -22,7 +21,7 @@ define Package/luci-app-homeproxy/conffiles
 /etc/homeproxy/resources/direct_list.txt
 /etc/homeproxy/resources/proxy_list.txt
 /etc/homeproxy/resources/clash_dashboard.ver
-/etc/homeproxy/resources/*.zip
+/etc/homeproxy/resources/*.tgz
 /etc/homeproxy/cache.db
 endef
 

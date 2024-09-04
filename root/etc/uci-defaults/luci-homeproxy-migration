@@ -25,4 +25,12 @@ if [ -n "$subscription_names" ]; then
 fi
 [ -z "$(uci -q changes "homeproxy")" ] || uci -q commit "homeproxy"
 
+# dashboard zip -> tgz
+RESOURCES_DIR="/etc/homeproxy/resources"
+zip="$(find "$RESOURCES_DIR" -maxdepth 1 -name '*.zip')"
+if [ -n "$zip" ]; then
+	echo "$zip" | sed 's| |\\ |g' | xargs rm -f
+	echo '{}' > "$RESOURCES_DIR"/clash_dashboard.ver
+fi
+
 exit 0

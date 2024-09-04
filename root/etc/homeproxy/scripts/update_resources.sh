@@ -77,16 +77,16 @@ check_clash_dashboard_update() {
 		log "[$(to_upper "$dashtype")] [$dashrepo] Local version: $local_dashdata_ver, latest version: $dashdata_ver."
 	fi
 
-	$wget "https://codeload.github.com/$dashrepo/zip/refs/heads/gh-pages" -O "$RUN_DIR/$dashtype.zip"
-	if [ ! -s "$RUN_DIR/$dashtype.zip" ]; then
-		rm -f "$RUN_DIR/$dashtype.zip"
+	$wget "https://codeload.github.com/$dashrepo/tar.gz/refs/heads/gh-pages" -O "$RUN_DIR/$dashtype.tgz"
+	if [ ! -s "$RUN_DIR/$dashtype.tgz" ]; then
+		rm -f "$RUN_DIR/$dashtype.tgz"
 		log "[$(to_upper "$dashtype")] [$dashrepo] Update failed."
 
 		set_lock "remove" "$dashtype"
 		return 1
 	fi
 
-	mv -f "$RUN_DIR/$dashtype.zip" "$RESOURCES_DIR/${dashrepo//\//_}.zip"
+	mv -f "$RUN_DIR/$dashtype.tgz" "$RESOURCES_DIR/${dashrepo//\//_}.tgz"
 	touch "$RESOURCES_DIR/$dashtype.ver"
 	json_init
 	json_load_file "$RESOURCES_DIR/$dashtype.ver"
